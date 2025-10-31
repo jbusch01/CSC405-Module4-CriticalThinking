@@ -26,7 +26,7 @@ void main(void) {
 
 // Fragment shader: receives color from vertex shader
 const fsSource = `
-precision medium float;
+precision mediump float;
 varying vec3 vColor;
 void main(void) {
     gl_FragColor = vec4(vColor, 1.0);
@@ -53,7 +53,7 @@ function createProgram(gl, vsSource, fsSource) {
     gl.attachShader(program, vs);
     gl.attachShader(program, fs);
     gl.linkProgram(program);
-    if (!gl.getProgramParamneter(program, gl.LINK_STATUS)) {
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
         console.error("Program link error:", gl.getProgramInfoLog(program));
         return null;
     }
@@ -156,13 +156,13 @@ gl.bufferData(gl.ARRAY_BUFFER, colors, gl.STATIC_DRAW);
 
 // Index buffer
 const indexBuffer = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER. colorBuffer);
-gl.bufferData(gl.ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
 
 // ------- 6. Connect Buffers to Shader Attributes -------
 const aPosition = gl.getAttribLocation(program, "aPosition");
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-gl.vertexAttributePointer(aPosition, 3, gl.FLOAT, false, 0, 0);
+gl.vertexAttribPointer(aPosition, 3, gl.FLOAT, false, 0, 0);
 gl.enableVertexAttribArray(aPosition);
 
 const aColor = gl.getAttribLocation(program, "aColor");
@@ -231,12 +231,12 @@ function makeTranslation(tx, ty, tz) {
     return out;
 }
 
-function makeRotation(rad) {
+function makeRotationY(rad) {
     const c = Math.cos(rad);
     const s = Math.sin(rad);
     const out = makeIdentity();
     out[0] = c;
-    out[2];
+    out[2] = s;
     out[8] = -s;
     out[10] = c;
     return out;
@@ -246,14 +246,14 @@ const uMVP = gl.getUniformLocation(program, "uMVP");
 
 // ------- 8. Render Loop -------
 gl.enable(gl.DEPTH_TEST); // so cube faces don't bleed through
-gl.clearColor(0.1, 0.1, 0.1, 0.1);
+gl.clearColor(0.1, 0.1, 0.1, 1.0);
 
 let angle = 0;
 function render() {
     // update angle
     angle += 0.01;
 
-    gl.viewport(0, 0, canvas.clientWidth, canvas.height);
+    gl.viewport(0, 0, canvas.width, canvas.height);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     const aspect = canvas.width / canvas.height;
@@ -261,7 +261,7 @@ function render() {
 
     // view = translate backwards so we can see cube
     const view = makeTranslation(0, 0, -6);
-    const model = makeRotation(angle);
+    const model = makeRotationY(angle);
 
     // MVP = proj * view * model (order matters!)
     const pv = multiplyMatrix(proj, view);
