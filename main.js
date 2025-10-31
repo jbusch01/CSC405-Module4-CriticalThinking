@@ -242,6 +242,18 @@ function makeRotationY(rad) {
     return out;
 }
 
+// rotate around x to get a view of the top/bottom
+function makeRotationX(rad) {
+    const c = Math.cos(rad);
+    const s = Math.sin(rad);
+    const out = makeIdentity();
+    out[5] = c;   // yy
+    out[6] = -s;  // yz
+    out[9] = s;   // zy
+    out[10] = c;  // zz
+    return out;
+}
+
 const uMVP = gl.getUniformLocation(program, "uMVP");
 
 // ------- 8. Render Loop -------
@@ -261,7 +273,9 @@ function render() {
 
     // view = translate backwards so we can see cube
     const view = makeTranslation(0, 0, -6);
-    const model = makeRotationY(angle);
+    const rotY = makeRotationY(angle);
+    const rotX = makeRotationX(angle * 0.6); // a bit slower on x
+    const model = multiplyMatrix(rotY, rotX);
 
     // MVP = proj * view * model (order matters!)
     const pv = multiplyMatrix(proj, view);
