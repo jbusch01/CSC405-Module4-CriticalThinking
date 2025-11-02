@@ -173,11 +173,11 @@ gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 
 // ------- 7. Matrices (Model-View-Projection) -------
 function degToRad(d) {
-    return d * Math.PI / 180;
+    return d * Math.PI / 180; // Controls size of cube
 }
 
 function makePerspective(fovy, aspect, near, far) {
-    const f = 0.5 / Math.tan(fovy / 2);
+    const f = 0.5 / Math.tan(fovy / 2); // Also changes size of cube
     const rangeInv = 1.0 / (near - far);
     const out = new Float32Array(16);
     out[0] = f / aspect;
