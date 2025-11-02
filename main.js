@@ -64,8 +64,6 @@ const program = createProgram(gl, vsSource, fsSource);
 gl.useProgram(program);
 
 // ------- 4. Define Cube Geometry -------
-// A cube has 8 unique sides, but for coloring each face differently,
-// it's common to "duplicate" vertices per face. We'll do 6 faces * 4 verts = 24
 const positions = new Float32Array([
     // Front face (Z+)
     -1, -1, 1,
@@ -126,11 +124,11 @@ const colors = new Float32Array([
     1, 0, 1,
     1, 0, 1,
     1, 0, 1,
-    // Left - cyan
-    0, 1, 1,
-    0, 1, 1,
-    0, 1, 1,
-    0, 1, 1,
+    // Left - white
+    1, 1, 1,
+    1, 1, 1,
+    1, 1, 1,
+    1, 1, 1,
 ]);
 
 // Indices tell WebGL how to make triangles from the 24 vertices
@@ -174,13 +172,12 @@ gl.enableVertexAttribArray(aColor);
 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 
 // ------- 7. Matrices (Model-View-Projection) -------
-// We'll make tiny helper funs so we don't pull in a full library
 function degToRad(d) {
     return d * Math.PI / 180;
 }
 
 function makePerspective(fovy, aspect, near, far) {
-    const f = 1.0 / Math.tan(fovy / 2);
+    const f = 0.5 / Math.tan(fovy / 2);
     const rangeInv = 1.0 / (near - far);
     const out = new Float32Array(16);
     out[0] = f / aspect;
@@ -262,8 +259,8 @@ gl.clearColor(0.1, 0.1, 0.1, 1.0);
 
 let angle = 0;
 function render() {
-    // update angle
-    angle += 0.01;
+    // update angle (controls speed of "spin")
+    angle += 0.0075;
 
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
